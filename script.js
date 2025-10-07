@@ -181,6 +181,8 @@ const closeModal = document.getElementById('closeModal');
 const prevPageBtn = document.getElementById('prevPage');
 const nextPageBtn = document.getElementById('nextPage');
 const pageInfo = document.getElementById('pageInfo');
+const mainDetailToggle = document.querySelector('.main-detail-toggle');
+const mainDetailContent = document.querySelector('.main-detail-content');
 
 // 노트 카드 생성 함수
 function createNoteCard(note) {
@@ -337,3 +339,11 @@ function handleImageError(img) {
     img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
 }
 
+
+//아코디언 UI 이벤트 리스너
+//const mainDetailToggle = document.querySelector('.main-detail-toggle');
+//const mainDetailContent = document.querySelector('.main-detail-content');
+
+mainDetailToggle.addEventListener('click', function() {
+    mainDetailContent.classList.toggle('disabled');
+});
