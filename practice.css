@@ -187,3 +187,51 @@ header .header-subtitle {
 .disabled {
     display: none;
 }
+
+
+/* main-shelf */
+
+.main-shelf {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+}
+
+.main-shelf-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+}
+
+.main-shelf-stage-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap:16px;
+    height: auto;
+    width: 100%;
+    padding: 0 16px;
+    border-bottom: 2px solid black;
+}
+
+.main-shelf-stage-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    padding: 24px;
+    gap: 24px;
+    border-bottom: 2px solid black;
+}
+
+.main-shelf-stage-content img {
+    width: auto;
+    height: 100px;
+    object-fit: cover;
+}
