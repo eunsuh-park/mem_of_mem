@@ -184,9 +184,6 @@ header .header-subtitle {
     font-size: 14px;
     font-weight: 200;}
 
-.disabled {
-    display: none;
-}
 
 
 /* main-shelf */
@@ -234,4 +231,9 @@ header .header-subtitle {
     width: auto;
     height: 100px;
     object-fit: cover;
+}
+
+
+.disabled {
+    display: none;
 }

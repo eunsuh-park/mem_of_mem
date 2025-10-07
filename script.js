@@ -183,6 +183,7 @@ const nextPageBtn = document.getElementById('nextPage');
 const pageInfo = document.getElementById('pageInfo');
 const mainDetailToggle = document.querySelector('.main-detail-toggle');
 const mainDetailContent = document.querySelector('.main-detail-content');
+const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
 
 // 노트 카드 생성 함수
 function createNoteCard(note) {
@@ -346,4 +347,19 @@ function handleImageError(img) {
 
 mainDetailToggle.addEventListener('click', function() {
     mainDetailContent.classList.toggle('disabled');
+});
+
+//const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
+// mainShelfStageHeader는 여러 개가 있을 수 있으므로, 모든 해당 요소에 대해 이벤트를 등록합니다.
+document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+        // 클릭된 header의 부모(.main-shelf-stage)에서 하위 .main-shelf-stage-content를 찾음
+        const stage = header.closest('.main-shelf-stage');
+        if (stage) {
+            const content = stage.querySelector('.main-shelf-stage-content');
+            if (content) {
+                content.classList.toggle('disabled');
+            }
+        }
+    });
 });
