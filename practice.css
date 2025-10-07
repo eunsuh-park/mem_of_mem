@@ -141,10 +141,11 @@ header .header-subtitle {
     width: 84%;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
 }
 
-.main-detail {
+.main-detail, .main-footer {
     position: sticky;
     top: 0;
     left: 0;
@@ -157,7 +158,7 @@ header .header-subtitle {
     background-color: #000000;
 }
 
-.main-detail-toggle {
+.main-detail-toggle, .main-footer-toggle {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -168,7 +169,14 @@ header .header-subtitle {
     border-bottom: 1px solid white;
 }
 
-.main-detail-toggle p {
+.main-detail-title, .main-footer-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.main-detail-toggle p, .main-footer-toggle p {
     font-size: 14px;
     font-weight: 200;
     color: white;
@@ -178,13 +186,15 @@ header .header-subtitle {
     background-color: red;
 }
 
-.main-detail-content {
+.main-detail-content, .main-footer-content {
     display: flex;
     flex-direction: row;
     align-items: start;
     gap: 16px;
     color: white;
     padding: 16px;
+    width: 100%;
+    height: auto;
 }
 
 .english {

@@ -183,6 +183,8 @@ const nextPageBtn = document.getElementById('nextPage');
 const pageInfo = document.getElementById('pageInfo');
 const mainDetailToggle = document.querySelector('.main-detail-toggle');
 const mainDetailContent = document.querySelector('.main-detail-content');
+const mainFooterToggle = document.querySelector('.main-footer-toggle');
+const mainFooterContent = document.querySelector('.main-footer-content');
 const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
 
 // 노트 카드 생성 함수
@@ -347,6 +349,15 @@ function handleImageError(img) {
 
 mainDetailToggle.addEventListener('click', function() {
     mainDetailContent.classList.toggle('disabled');
+});
+
+mainFooterToggle.addEventListener('click', function() {
+    const wasDisabled = mainFooterContent.classList.contains('disabled');
+    mainFooterContent.classList.toggle('disabled');
+    // disabled가 없어졌을 때(=보이게 되었을 때) 스크롤을 제일 아래로 이동
+    if (wasDisabled && !mainFooterContent.classList.contains('disabled')) {
+        mainFooterContent.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
 });
 
 //const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
