@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노트 아카이브</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">노트 아카이브</h1>
+        <p class="header-subtitle">개인 노트 컬렉션</p>
+    </header>
+
+    <main class="main">
+        <section class="notes-grid" id="notesGrid">
+            <!-- 노트 카드들이 동적으로 생성됩니다 -->
+        </section>
+    </main>
+
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">노트 제목</h2>
+            </div>
+            <div class="modal-body">
+                <div class="note-pages" id="notePages">
+                    <!-- 노트 페이지들이 동적으로 생성됩니다 -->
+                </div>
+                <div class="page-controls">
+                    <button id="prevPage" class="page-btn">이전</button>
+                    <span id="pageInfo">1 / 1</span>
+                    <button id="nextPage" class="page-btn">다음</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
