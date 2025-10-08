@@ -186,6 +186,9 @@ const mainDetailContent = document.querySelector('.main-detail-content');
 const mainFooterToggle = document.querySelector('.main-footer-toggle');
 const mainFooterContent = document.querySelector('.main-footer-content');
 const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
+const hoverInfo = document.querySelector('.hover-info');
+const hoverInfoItem = document.querySelector('.hover-info-item');
+const hoverInfoItemText = document.querySelector('.hover-info-item-text');
 
 // 노트 카드 생성 함수
 function createNoteCard(note) {
@@ -372,5 +375,22 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
                 content.classList.toggle('disabled');
             }
         }
+    });
+});
+
+// const hoverInfo = document.querySelector('.hover-info');
+// onst hoverInfoItem = document.querySelector('.hover-info-item');
+// const hoverInfoItemText = document.querySelector('.hover-info-item-text');//
+// .main-shelf-stage-content-item 여러 개에 대해 hover-info 토글
+document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
+    noteCover.addEventListener('mouseenter', function() {
+        document.querySelectorAll('.hover-info').forEach(function(hover) {
+            hover.classList.toggle('disabled');
+        });
+    });
+    noteCover.addEventListener('mouseleave', function() {
+        document.querySelectorAll('.hover-info').forEach(function(hover) {
+            hover.classList.toggle('disabled');
+        });
     });
 });
