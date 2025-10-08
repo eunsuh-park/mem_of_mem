@@ -1,3 +1,24 @@
+// 노트 추가 정보를 담을 변수
+let noteInfoData = [];
+
+// JSON 데이터 로드
+async function loadNoteInfo() {
+    try {
+        const response = await fetch('data/note_data.json');
+        const data = await response.json();
+        noteInfoData = data.notes;
+        // notesData와 병합
+        notesData.forEach(note => {
+            const info = noteInfoData.find(n => n.번호 === note.id);
+            if (info) {
+                note.info = info;
+            }
+        });
+    } catch (error) {
+        console.error('JSON 데이터 로드 실패:', error);
+    }
+}
+
 // 노트 데이터 구조
 const notesData = [
     {
@@ -316,8 +337,102 @@ function handleKeyPress(event) {
     }
 }
 
+// hover-info 설정 함수
+function setupHoverInfo() {
+    // hover-info를 body에 append (최상위)
+    let hoverInfo = document.querySelector('.hover-info');
+    // 없으면 새로 생성
+    if (!hoverInfo) {
+        hoverInfo = document.createElement('div');
+        hoverInfo.className = 'hover-info disabled';
+        // 예시: 기본 항목 추가 (실제 데이터에 맞게 수정 필요)
+        hoverInfo.innerHTML = `
+            <div class="hover-info-item" id="note_purpose">
+                <p class="hover-info-item-text">사용 목적</p>
+            </div>
+            <div class="hover-info-item" id="note_period">
+                <p class="hover-info-item-text">시기 구분</p>
+            </div>
+            <div class="hover-info-item" id="note_duration">
+                <p class="hover-info-item-text">개시일자-최종 사용일자</p>
+            </div>
+            <div class="hover-info-item" id="note_total_page">
+                <p class="hover-info-item-text">구입처</p>
+            </div>
+            <div class="hover-info-item" id="note_remaining_page">
+                <p class="hover-info-item-text">페이지 수</p>
+            </div>
+        `;
+        document.body.appendChild(hoverInfo);
+    }
+
+    // hover-info를 항상 body의 최상위에 위치시키기 위한 스타일
+    hoverInfo.style.position = 'absolute';
+    hoverInfo.style.pointerEvents = 'none'; // hover-info 위에 마우스가 올라가도 이벤트가 noteCover에만 적용
+
+    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
+        noteCover.addEventListener('mouseenter', function(e) {
+            // 노트 이미지에서 노트 번호 추출
+            const img = noteCover.querySelector('img');
+            if (!img) return;
+            
+            const src = img.getAttribute('src');
+            const noteIdMatch = src.match(/note_(\d+)/);
+            if (!noteIdMatch) return;
+            
+            const noteId = parseInt(noteIdMatch[1]);
+            const note = notesData.find(n => n.id === noteId);
+            // 이 부분이 json 파일과 연결되는 핵심입니다.
+            // 1. loadNoteInfo() 함수가 note_data.json 파일을 fetch해서 noteInfoData 배열에 저장합니다.
+            // 2. notesData의 각 note 객체에 대해, noteInfoData에서 번호가 일치하는 info 객체를 찾아 note.info로 할당합니다.
+            // 3. 아래 코드에서 note.info를 통해 json에서 불러온 데이터를 접근할 수 있습니다.
+
+            // 노트 정보가 있으면 hover-info 내용 업데이트
+            if (note && note.info) {
+                const info = note.info; // info는 note_data.json에서 불러온 해당 노트의 정보입니다.
+                document.getElementById('note_period').querySelector('.hover-info-item-text').textContent = 
+                    `${info.시기_구분}`;
+                document.getElementById('note_purpose').querySelector('.hover-info-item-text').textContent = 
+                    `${info.사용_목적}`;
+                document.getElementById('note_duration').querySelector('.hover-info-item-text').textContent = 
+                    `${info.개시일자} ~ ${info.최종_사용일자}`;
+                document.getElementById('note_total_page').querySelector('.hover-info-item-text').textContent = 
+                    `${info.구입처}`;
+            }
+            
+            // 이미지의 위치와 크기를 구함
+            const rect = noteCover.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            // hover-info의 크기 측정 (보이게 해야 정확히 측정됨)
+            hoverInfo.classList.remove('disabled');
+            const hoverWidth = hoverInfo.offsetWidth;
+            const hoverHeight = hoverInfo.offsetHeight;
+
+            // 이미지의 우측 중앙에 hover-info를 위치
+            const left = rect.right + 24 + scrollLeft; // 이미지 우측에 24px 띄우기
+            const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
+
+            hoverInfo.style.left = left + 'px';
+            hoverInfo.style.top = top + 'px';
+            hoverInfo.style.zIndex = '9999';
+            hoverInfo.classList.remove('disabled');
+        });
+        noteCover.addEventListener('mouseleave', function() {
+            hoverInfo.classList.add('disabled');
+        });
+    });
+}
+
 // 이벤트 리스너 등록
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // JSON 데이터 먼저 로드
+    await loadNoteInfo();
+    
+    // hover-info 설정 (JSON 데이터 로드 후)
+    setupHoverInfo();
+    
     // 노트 카드들 렌더링
     notesData.forEach(note => {
         const card = createNoteCard(note);
@@ -377,70 +492,6 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
         }
     });
 });
-
-// const hoverInfo = document.querySelector('.hover-info');
-// onst hoverInfoItem = document.querySelector('.hover-info-item');
-// const hoverInfoItemText = document.querySelector('.hover-info-item-text');//
-// .main-shelf-stage-content-item 여러 개에 대해 hover-info 토글
-// hover-info를 HTML 구조에서 분리하여 body 최상단에 위치시키고, 각 noteCover hover 시 해당 위치에 표시
-(function() {
-    // hover-info를 body에 append (최상위)
-    let hoverInfo = document.querySelector('.hover-info');
-    // 없으면 새로 생성
-    if (!hoverInfo) {
-        hoverInfo = document.createElement('div');
-        hoverInfo.className = 'hover-info disabled';
-        // 예시: 기본 항목 추가 (실제 데이터에 맞게 수정 필요)
-        hoverInfo.innerHTML = `
-            <div class="hover-info-item" id="note_purpose">
-                <p class="hover-info-item-text">사용 목적</p>
-            </div>
-            <div class="hover-info-item" id="note_period">
-                <p class="hover-info-item-text">시기 구분</p>
-            </div>
-            <div class="hover-info-item" id="note_duration">
-                <p class="hover-info-item-text">개시일자-최종 사용일자</p>
-            </div>
-            <div class="hover-info-item" id="note_total_page">
-                <p class="hover-info-item-text">구입처</p>
-            </div>
-            <div class="hover-info-item" id="note_remaining_page">
-                <p class="hover-info-item-text">페이지 수</p>
-            </div>
-        `;
-        document.body.appendChild(hoverInfo);
-    }
-
-    // hover-info를 항상 body의 최상위에 위치시키기 위한 스타일
-    hoverInfo.style.position = 'absolute';
-    hoverInfo.style.pointerEvents = 'none'; // hover-info 위에 마우스가 올라가도 이벤트가 noteCover에만 적용
-
-    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
-        noteCover.addEventListener('mouseenter', function(e) {
-            // 이미지의 위치와 크기를 구함
-            const rect = noteCover.getBoundingClientRect();
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            // hover-info의 크기 측정 (보이게 해야 정확히 측정됨)
-            hoverInfo.classList.remove('disabled');
-            const hoverWidth = hoverInfo.offsetWidth;
-            const hoverHeight = hoverInfo.offsetHeight;
-
-            // 이미지의 우측 중앙에 hover-info를 위치
-            const left = rect.right + 24 + scrollLeft; // 이미지 우측에 24px 띄우기
-            const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
-
-            hoverInfo.style.left = left + 'px';
-            hoverInfo.style.top = top + 'px';
-            hoverInfo.style.zIndex = '9999';
-            hoverInfo.classList.remove('disabled');
-        });
-        noteCover.addEventListener('mouseleave', function() {
-            hoverInfo.classList.add('disabled');
-        });
-    });
-})();
 
 
 // flip 버튼 기능: 노트 커버 이미지를 클릭하면 앞/뒤 이미지를 토글한다.
@@ -517,3 +568,4 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
         });
     });
 })();
+
