@@ -382,15 +382,65 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
 // onst hoverInfoItem = document.querySelector('.hover-info-item');
 // const hoverInfoItemText = document.querySelector('.hover-info-item-text');//
 // .main-shelf-stage-content-item 여러 개에 대해 hover-info 토글
-document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
-    noteCover.addEventListener('mouseenter', function() {
-        document.querySelectorAll('.hover-info').forEach(function(hover) {
-            hover.classList.toggle('disabled');
+// hover-info를 HTML 구조에서 분리하여 body 최상단에 위치시키고, 각 noteCover hover 시 해당 위치에 표시
+(function() {
+    // hover-info를 body에 append (최상위)
+    let hoverInfo = document.querySelector('.hover-info');
+    if (hoverInfo) {
+        // 이미 존재하면 body로 이동
+        document.body.appendChild(hoverInfo);
+    } else {
+        // 없으면 새로 생성
+        hoverInfo = document.createElement('div');
+        hoverInfo.className = 'hover-info disabled';
+        // 예시: 기본 항목 추가 (실제 데이터에 맞게 수정 필요)
+        hoverInfo.innerHTML = `
+            <div class="hover-info-item" id="note_purpose">
+                <p class="hover-info-item-text">사용 목적</p>
+            </div>
+            <div class="hover-info-item" id="note_period">
+                <p class="hover-info-item-text">시기 구분</p>
+            </div>
+            <div class="hover-info-item" id="note_duration">
+                <p class="hover-info-item-text">개시일자-최종 사용일자</p>
+            </div>
+            <div class="hover-info-item" id="note_total_page">
+                <p class="hover-info-item-text">구입처</p>
+            </div>
+            <div class="hover-info-item" id="note_remaining_page">
+                <p class="hover-info-item-text">페이지 수</p>
+            </div>
+        `;
+        document.body.appendChild(hoverInfo);
+    }
+
+    // hover-info를 항상 body의 최상위에 위치시키기 위한 스타일
+    hoverInfo.style.position = 'absolute';
+    hoverInfo.style.pointerEvents = 'none'; // hover-info 위에 마우스가 올라가도 이벤트가 noteCover에만 적용
+
+    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
+        noteCover.addEventListener('mouseenter', function(e) {
+            // 이미지의 위치와 크기를 구함
+            const rect = noteCover.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            // hover-info의 크기 측정 (보이게 해야 정확히 측정됨)
+            hoverInfo.classList.remove('disabled');
+            const hoverWidth = hoverInfo.offsetWidth;
+            const hoverHeight = hoverInfo.offsetHeight;
+
+            // 이미지의 우측 중앙에 hover-info를 위치
+            const left = rect.right + 12 + scrollLeft; // 이미지 우측에 12px 띄우기
+            const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
+
+            hoverInfo.style.left = left + 'px';
+            hoverInfo.style.top = top + 'px';
+            hoverInfo.style.zIndex = '9999';
+            hoverInfo.classList.remove('disabled');
+        });
+        noteCover.addEventListener('mouseleave', function() {
+            hoverInfo.classList.add('disabled');
         });
     });
-    noteCover.addEventListener('mouseleave', function() {
-        document.querySelectorAll('.hover-info').forEach(function(hover) {
-            hover.classList.toggle('disabled');
-        });
-    });
-});
+})();
