@@ -386,11 +386,8 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
 (function() {
     // hover-info를 body에 append (최상위)
     let hoverInfo = document.querySelector('.hover-info');
-    if (hoverInfo) {
-        // 이미 존재하면 body로 이동
-        document.body.appendChild(hoverInfo);
-    } else {
-        // 없으면 새로 생성
+    // 없으면 새로 생성
+    if (!hoverInfo) {
         hoverInfo = document.createElement('div');
         hoverInfo.className = 'hover-info disabled';
         // 예시: 기본 항목 추가 (실제 데이터에 맞게 수정 필요)
@@ -431,7 +428,7 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
             const hoverHeight = hoverInfo.offsetHeight;
 
             // 이미지의 우측 중앙에 hover-info를 위치
-            const left = rect.right + 12 + scrollLeft; // 이미지 우측에 12px 띄우기
+            const left = rect.right + 24 + scrollLeft; // 이미지 우측에 24px 띄우기
             const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
 
             hoverInfo.style.left = left + 'px';
@@ -441,6 +438,82 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
         });
         noteCover.addEventListener('mouseleave', function() {
             hoverInfo.classList.add('disabled');
+        });
+    });
+})();
+
+
+// flip 버튼 기능: 노트 커버 이미지를 클릭하면 앞/뒤 이미지를 토글한다.
+// flip 버튼은 각 main-shelf-stage-content-item에 hover 시에만 동적으로 생성/제거된다.
+
+(function() {
+    // flip 버튼의 HTML 템플릿
+    const flipButtonHTML = `
+        <div class="button-container" id="main-shelf-stage-content-item-flip-button">
+            <button class="button" id="main-shelf-stage-content-item-flip-button">
+                <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><title>flip_vertical_fill</title><g id="flip_vertical_fill" fill='none' fill-rule='evenodd'><path d='M24 0v24H0V0zM12.593 23.258l-.011.002-.071.035-.02.004-.014-.004-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01-.017.428.005.02.01.013.104.074.015.004.012-.004.104-.074.012-.016.004-.017-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113-.013.002-.185.093-.01.01-.003.011.018.43.005.012.008.007.201.093c.012.004.023 0 .029-.008l.004-.014-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014-.034.614c0 .012.007.02.017.024l.015-.002.201-.093.01-.008.004-.011.017-.43-.003-.012-.01-.01z'/><path fill='#FFFFFFFF' d='M12 2a1 1 0 0 1 1 1v18a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1M7.864 5.207C8.28 4.045 10 4.343 10 5.577V18.9A1.1 1.1 0 0 1 8.9 20H4.142a1.1 1.1 0 0 1-1.036-1.47zm6.136.37c0-1.234 1.72-1.532 2.136-.37l4.758 13.323A1.1 1.1 0 0 1 19.858 20H15.1a1.1 1.1 0 0 1-1.1-1.1z'/></g></svg>
+            </button>
+        </div>
+    `;
+
+    // 각 노트 커버 아이템에 hover 이벤트를 부여
+    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCoverItem) {
+        let flipButtonContainer = null;
+
+        noteCoverItem.addEventListener('mouseenter', function() {
+            // flip 버튼이 이미 있으면 중복 생성 방지
+            if (!noteCoverItem.querySelector('.button-container')) {
+                // 버튼을 DOM으로 파싱해서 삽입
+                const temp = document.createElement('div');
+                temp.innerHTML = flipButtonHTML.trim();
+                flipButtonContainer = temp.firstChild;
+                // 버튼을 아이템의 맨 앞에 삽입
+                noteCoverItem.insertBefore(flipButtonContainer, noteCoverItem.firstChild);
+
+                // 버튼 클릭 이벤트 등록
+                const flipBtn = flipButtonContainer.querySelector('button');
+                flipBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const noteCoverImage = noteCoverItem.querySelector('img');
+                    const currentSrc = noteCoverImage.getAttribute('src');
+
+                    // 1. 현재 노트 커버(front)면 -> 뒷면(back) 이미지로 변경 후 3초 뒤에 다시 앞면으로 복귀
+                    if (currentSrc.includes('note_cover')) {
+                        const newSrc = currentSrc.replace(
+                            /note_cover\/(note_\d+)\.png/,
+                            'note_back/$1_back.png'
+                        );
+                        noteCoverImage.setAttribute('src', newSrc);
+
+                        setTimeout(function() {
+                            if (noteCoverImage.getAttribute('src') === newSrc) {
+                                const originalSrc = newSrc.replace(
+                                    /note_back\/(note_\d+)_back\.png/,
+                                    'note_cover/$1.png'
+                                );
+                                noteCoverImage.setAttribute('src', originalSrc);
+                            }
+                        }, 1500);
+
+                    // 2. 현재 노트 뒷면(back)이면 -> 앞면(cover) 이미지로 변경 (즉시)
+                    } else if (currentSrc.includes('note_back')) {
+                        const newSrc = currentSrc.replace(
+                            /note_back\/(note_\d+)_back\.png/,
+                            'note_cover/$1.png'
+                        );
+                        noteCoverImage.setAttribute('src', newSrc);
+                    }
+                });
+            }
+        });
+
+        noteCoverItem.addEventListener('mouseleave', function() {
+            // flip 버튼이 있으면 제거
+            const btn = noteCoverItem.querySelector('.button-container');
+            if (btn) {
+                btn.remove();
+            }
         });
     });
 })();
