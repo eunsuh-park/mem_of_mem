@@ -1,6 +1,13 @@
 @import "reset.css";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
 /* font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; */
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+/* Cafe24 폰트는 @font-face로 로드 */
+@font-face {
+    font-family: 'Cafe24AnemoneAir';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202@1.0/Cafe24Ohsquareair.woff') format('woff');
+}
+
 
 * {
     font-family: "Pretendard Variable", Pretendard;
@@ -41,9 +48,6 @@ header img {
     background-color: white;
 }
 
-.header-introduction {
-}
-
 header .header-title-container {
     display: flex;
     flex-direction: row;
@@ -77,7 +81,7 @@ header .header-subtitle {
     flex: 0 1 120px; /* 필요 시 아래로 내려가도록 */
 }
 
-.header-text {
+.header-text, .korean {
     font-size: 13px;
     font-weight: 400;
     line-height: 1.5;
@@ -155,9 +159,22 @@ header .header-subtitle {
     position: relative;
 }
 
-.main-detail, .main-footer {
+.main-detail {
     position: sticky;
     top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    background-color: #000;
+}
+
+.main-footer {
+    position: sticky;
+    bottom: 0;
     left: 0;
     right: 0;
     z-index: 100;
@@ -176,6 +193,7 @@ header .header-subtitle {
     align-items: center;
     color: white;
     padding: 16px;
+    box-sizing: border-box;
     border-bottom: 1px solid white;
 }
 
@@ -184,10 +202,15 @@ header .header-subtitle {
     flex-direction: row;
     align-items: center;
     gap: 16px;
+    font-family: 'Cafe24AnemoneAir';
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .main-detail-toggle p, .main-footer-toggle p {
-    font-size: 13px;
+    font-family: 'Cafe24AnemoneAir';
+    font-size: 16px;
     font-weight: 200;
     color: white;
     padding: 0;
@@ -195,15 +218,30 @@ header .header-subtitle {
     width: fit-content;
 }
 
+/* 아코디언 효과 */
 .main-detail-content, .main-footer-content {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
     align-items: start;
-    gap: 16px;
+    box-sizing: border-box;
     color: white;
     padding: 16px;
     width: 100%;
-    height: auto;
+    max-height: 1000px;
+    opacity: 1;
+    overflow: hidden;
+    transition: all 0.35s ease-in-out;
+}
+
+.main-detail-content.disabled,
+.main-footer-content.disabled {
+    display: grid;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .english {
@@ -220,9 +258,13 @@ header .header-subtitle {
     justify-content: start;
     align-items: start;
     width: 100%;
+    height:100vh;
+    background-color: #f3f3f3;
+    padding-bottom: 92px;
 }
 
 .main-shelf-stage {
+    background-color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -236,10 +278,28 @@ header .header-subtitle {
     justify-content: start;
     align-items: center;
     gap:16px;
-    height: auto;
+    height: fit-content;
     width: 100%;
     padding: 0 16px;
     border-bottom: 2px solid black;
+}
+
+.main-shelf-stage-title {
+    font-family: "Work Sans", sans-serif;
+    font-size: 48px;
+    margin:0;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+}
+
+.main-shelf-stage-subtitle {
+    font-family: "Cafe24AnemoneAir", sans-serif;
+    font-size: 20px;
+    margin:0;
+    line-height: 1;
+    font-weight: 400;
+    letter-spacing: -0.02em;
 }
 
 .main-shelf-stage-content {
@@ -251,6 +311,19 @@ header .header-subtitle {
     padding: 24px;
     gap: 24px;
     border-bottom: 2px solid black;
+    max-height: 1000px;
+    opacity: 1;
+    overflow: hidden;
+    transition: all 0.35s ease-in-out;
+}
+
+.main-shelf-stage-content.disabled {
+    display: flex;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .main-shelf-stage-content img {
@@ -279,6 +352,7 @@ header .header-subtitle {
 
 .hover-info-item {
     border: 1px solid #000;
+    background-color: #fff;
     color: #000;
     border-radius: 30px;
     height:32px;
@@ -314,9 +388,11 @@ header .header-subtitle {
     border: none;
     cursor: pointer;    
     transition: all 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .button:hover {
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
 

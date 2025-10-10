@@ -467,6 +467,14 @@ function handleImageError(img) {
 
 mainDetailToggle.addEventListener('click', function() {
     mainDetailContent.classList.toggle('disabled');
+    // 하위 svg 요소를 180도 회전시키기
+    const toggleSvg = mainDetailToggle.querySelector('svg');
+    if (toggleSvg) {
+        // toggle 회전
+        const isExpanded = !mainDetailContent.classList.contains('disabled');
+        toggleSvg.style.transition = 'transform 0.3s';
+        toggleSvg.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
 });
 
 mainFooterToggle.addEventListener('click', function() {
@@ -475,6 +483,14 @@ mainFooterToggle.addEventListener('click', function() {
     // disabled가 없어졌을 때(=보이게 되었을 때) 스크롤을 제일 아래로 이동
     if (wasDisabled && !mainFooterContent.classList.contains('disabled')) {
         mainFooterContent.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+    // 하위 svg 요소를 180도 회전시키기
+    const svg = mainFooterToggle.querySelector('svg');
+    if (svg) {
+        // toggle 회전
+        const isExpanded = !mainFooterContent.classList.contains('disabled');
+        svg.style.transition = 'transform 0.3s';
+        svg.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
     }
 });
 
