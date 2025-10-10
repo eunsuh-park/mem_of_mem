@@ -29,6 +29,7 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    border-right: 2px solid #000;
 }
 
 
@@ -50,7 +51,8 @@ header .header-title-container {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #000;
-    padding: 24px 48px;
+    margin: 18px 24px;
+    padding-bottom: 18px;
     width: auto;
     white-space: nowrap; /* 텍스트 줄바꿈 방지 */
     overflow: hidden; /* 넘치는 내용 감춤 */
@@ -81,7 +83,7 @@ header .header-subtitle {
     line-height: 1.5;
     padding: 0;
     margin: 0;
-    padding: 24px 48px;
+    padding: 18px 24px;
 }
 
 
@@ -98,20 +100,18 @@ header .header-subtitle {
     font-size: 9px;
     font-weight: 400;
     line-height: 1.5;
-    border-top: 1px solid #666;
     color: #666;
     padding-bottom: 16px;
-    background: #fff; /* 스크롤 시 가독성을 위해 배경색 지정 */
+    background-color: #f3f3f3; /* 스크롤 시 가독성을 위해 배경색 지정 */
     z-index: 10; /* 다른 요소와 겹칠 경우를 대비 */
 }
 
 
 
 /* header-text-container */
-
+/*
 #middle-banner {
-    width: 6%;
-    min-width: 64px;
+    min-width: 48px;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -129,20 +129,22 @@ header .header-subtitle {
     text-align: center;
     color: #fff;
     gap: 16px;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .middle-banner-title {
     font-weight: 600;
-    line-height: 1.25;
+    letter-spacing: -0.2em;
     writing-mode: vertical-rl;
 }
 
 .middle-banner-text {
-    font-weight: 400;
-    line-height: 1.25;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: -0.1em;
     writing-mode: vertical-rl;
 }
+*/
 
 
 #main-content {
@@ -185,7 +187,7 @@ header .header-subtitle {
 }
 
 .main-detail-toggle p, .main-footer-toggle p {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 200;
     color: white;
     padding: 0;
