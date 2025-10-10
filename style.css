@@ -1,3 +1,11 @@
+@import "reset.css";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+/* font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; */
+
+* {
+    font-family: "Pretendard Variable", Pretendard;
+}
+
 html {
     margin: 0;
     padding: 0;
@@ -10,12 +18,10 @@ body {
     align-items: start;
     justify-content: start;
     height: 100vh;
-    background-color: #f0f0f0;
     overflow: hidden;
 }
 
 header {
-    background-color: #7bb0ca;
     width: 30%;
     height: 100vh;
     overflow: hidden;
@@ -25,27 +31,29 @@ header {
     justify-content: space-between;
 }
 
-header .header-introduction {
-    padding: 48px;
-    background-color: teal
-}
 
 header img {
-    width: 50%;
-    margin-bottom: 48px;
+    width: auto;
+    align-self: center;
+    max-width: 200px;
+    margin: 48px 48px 0 48px;
+    background-color: white;
+}
+
+.header-introduction {
 }
 
 header .header-title-container {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #000;
-    gap:auto;
-    width: 100%;
-    background-color: lightblue;
-    padding: 0;
-    margin-bottom: 16px;
+    padding: 24px 48px;
+    width: auto;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden; /* 넘치는 내용 감춤 */
 }
 
 header .header-title {
@@ -53,28 +61,27 @@ header .header-title {
     font-weight: 600;
     line-height: 2;
     color: #000;
-    width: fit-content;
-    border: 1px solid teal;
     padding: 0;
     margin: 0;
 }
 
 header .header-subtitle {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.25;
     color: #666;
-    background-color: #f0f0f0;
     padding: 0;
     margin: 0;
+    flex: 0 1 120px; /* 필요 시 아래로 내려가도록 */
 }
 
 .header-text {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
     line-height: 1.5;
     padding: 0;
     margin: 0;
+    padding: 24px 48px;
 }
 
 
@@ -85,23 +92,24 @@ header .header-subtitle {
     justify-content: center;
     align-items: center;
     text-align: center;
-    position: relative;
+    position: sticky;
     left: 0;
     bottom: 0;
-    font-size: 12px;
+    font-size: 9px;
     font-weight: 400;
-    line-height: 1.25;
-    border-top: 1px solid #000;
-    background-color: lightpink;
+    line-height: 1.5;
+    border-top: 1px solid #666;
     color: #666;
     padding-bottom: 16px;
+    background: #fff; /* 스크롤 시 가독성을 위해 배경색 지정 */
+    z-index: 10; /* 다른 요소와 겹칠 경우를 대비 */
 }
+
 
 
 /* header-text-container */
 
 #middle-banner {
-    background-color: #000;
     width: 6%;
     min-width: 64px;
     height: 100vh;
@@ -110,6 +118,7 @@ header .header-subtitle {
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-color: #000;
 }
 
 .middle-banner-content {
@@ -137,7 +146,6 @@ header .header-subtitle {
 
 
 #main-content {
-    background-color: #f7e6e6;
     width: 84%;
     height: 100vh;
     overflow-y: auto;
@@ -155,7 +163,7 @@ header .header-subtitle {
     flex-direction: column;
     justify-content: center;
     align-items: start;
-    background-color: #000000;
+    background-color: #000;
 }
 
 .main-detail-toggle, .main-footer-toggle {
@@ -183,7 +191,6 @@ header .header-subtitle {
     padding: 0;
     margin: 0;
     width: fit-content;
-    background-color: red;
 }
 
 .main-detail-content, .main-footer-content {
@@ -269,7 +276,6 @@ header .header-subtitle {
 }
 
 .hover-info-item {
-    background-color: #fff;
     border: 1px solid #000;
     color: #000;
     border-radius: 30px;
@@ -303,14 +309,12 @@ header .header-subtitle {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.25);
     border: none;
     cursor: pointer;    
     transition: all 0.3s ease;
 }
 
 .button:hover {
-    background-color: rgba(0, 0, 0, 0.75);
 }
 
 
