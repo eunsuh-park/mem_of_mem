@@ -196,6 +196,42 @@
         </div>
     </main>
 
+    <!-- 노트 상세 모달 -->
+    <div class="note-detail-modal" id="noteDetailModal">
+        <div class="note-detail-modal-content">
+            <div class="note-detail-header">
+                <button class="note-detail-close" id="noteDetailClose">
+                    <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='#FFFFFF' d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>
+                </button>
+                <h2 class="note-detail-title" id="noteDetailTitle">1st Note</h2>
+                <div class="note-detail-info">
+                    <p class="note-detail-period" id="noteDetailPeriod">Middle School</p>
+                    <p class="note-detail-years" id="noteDetailYears">Mainly 2013-14</p>
+                    <p class="note-detail-pages" id="noteDetailPages">Total 120p</p>
+                </div>
+                <div class="note-detail-navigation">
+                    <p class="note-detail-navigation-text">Press ←, →</p>
+                </div>
+            </div>
+            <div class="note-detail-content">
+                <div class="note-detail-image-container">
+                    <img class="note-detail-image" id="noteDetailImage" src="" alt="">
+                </div>
+            </div>
+            <div class="note-detail-footer">
+                <div class="note-detail-page-counter" id="noteDetailPageCounter">1/108</div>
+                <div class="note-detail-date" id="noteDetailDate">26, November 2016</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 알림 -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <p class="toast-message" id="toastMessage"></p>
+        </div>
+    </div>
+
 <!--
     노트 "카드"들이 동적으로 생성됩니다
     <main class="main">

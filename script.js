@@ -211,6 +211,10 @@ const hoverInfo = document.querySelector('.hover-info');
 const hoverInfoItem = document.querySelector('.hover-info-item');
 const hoverInfoItemText = document.querySelector('.hover-info-item-text');
 
+// Toast DOM 요소들
+const toast = document.getElementById('toast');
+const toastMessage = document.getElementById('toastMessage');
+
 // 노트 카드 생성 함수
 function createNoteCard(note) {
     const card = document.createElement('div');
@@ -337,6 +341,16 @@ function handleKeyPress(event) {
     }
 }
 
+// Toast 알림 표시
+function showToast(message) {
+    toastMessage.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
 // hover-info 초기화 함수
 function initHoverInfo() {
     // hover-info를 body에 append (최상위)
@@ -373,7 +387,7 @@ function initHoverInfo() {
     return hoverInfo;
 }
 
-// 통합된 노트 아이템 hover 기능 (hover-info, flip button, signature background)
+// 통합된 노트 아이템 hover 기능 (hover-info, flip button)
 function setupNoteItemHover(hoverInfo) {
     const noteItems = document.querySelectorAll('.main-shelf-stage-content-item');
     
@@ -487,9 +501,34 @@ function setupNoteItemHover(hoverInfo) {
                     }, 600);
                 });
                 
-                // Detail Button (클릭 이벤트 없음)
+                // Detail Button 클릭 이벤트
                 const detailBtn = buttonsContainer.querySelector('.detail-button');
-                // 추후 기능 추가 예정
+                detailBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    console.log('Detail 버튼 클릭됨');
+                    
+                    const imgSrc = img.getAttribute('src');
+                    console.log('이미지 src:', imgSrc);
+                    
+                    const noteIdMatch = imgSrc.match(/note_(\d+)/);
+                    console.log('노트 ID 매치 결과:', noteIdMatch);
+                    
+                    if (noteIdMatch) {
+                        const noteId = parseInt(noteIdMatch[1]);
+                        console.log('추출된 노트 ID:', noteId);
+                        
+                        // 노트 3번이 아닌 경우 toast 메시지 표시
+                        if (noteId !== 3) {
+                            showToast('노트가 아직 아카이브되지 않았습니다.');
+                        } else {
+                            // 노트 3번인 경우 (향후 모달 기능 추가 가능)
+                            showToast('노트 3번 상세 정보 (개발 예정)');
+                        }
+                    } else {
+                        console.log('노트 ID를 찾을 수 없음');
+                    }
+                });
             }
             
             // === 3. Signature Background 생성 ===
@@ -600,11 +639,7 @@ function handleImageError(img) {
     img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
 }
 
-
 //아코디언 UI 이벤트 리스너
-//const mainDetailToggle = document.querySelector('.main-detail-toggle');
-//const mainDetailContent = document.querySelector('.main-detail-content');
-
 mainDetailToggle.addEventListener('click', function() {
     mainDetailContent.classList.toggle('disabled');
     // 하위 svg 요소를 180도 회전시키기
@@ -634,7 +669,6 @@ mainFooterToggle.addEventListener('click', function() {
     }
 });
 
-//const mainShelfStageHeader = document.querySelector('.main-shelf-stage-header');
 // mainShelfStageHeader는 여러 개가 있을 수 있으므로, 모든 해당 요소에 대해 이벤트를 등록합니다.
 document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
     header.addEventListener('click', function() {
