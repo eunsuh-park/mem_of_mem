@@ -337,8 +337,8 @@ function handleKeyPress(event) {
     }
 }
 
-// hover-info 설정 함수
-function setupHoverInfo() {
+// hover-info 초기화 함수
+function initHoverInfo() {
     // hover-info를 body에 append (최상위)
     let hoverInfo = document.querySelector('.hover-info');
     // 없으면 새로 생성
@@ -368,59 +368,196 @@ function setupHoverInfo() {
 
     // hover-info를 항상 body의 최상위에 위치시키기 위한 스타일
     hoverInfo.style.position = 'absolute';
-    hoverInfo.style.pointerEvents = 'none'; // hover-info 위에 마우스가 올라가도 이벤트가 noteCover에만 적용
+    hoverInfo.style.pointerEvents = 'none';
+    
+    return hoverInfo;
+}
 
-    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCover) {
-        noteCover.addEventListener('mouseenter', function(e) {
-            // 노트 이미지에서 노트 번호 추출
-            const img = noteCover.querySelector('img');
-            if (!img) return;
-            
+// 통합된 노트 아이템 hover 기능 (hover-info, flip button, signature background)
+function setupNoteItemHover(hoverInfo) {
+    const noteItems = document.querySelectorAll('.main-shelf-stage-content-item');
+    
+    // 버튼 컨테이너 HTML 템플릿 (하단에 두 개의 버튼)
+    const buttonsHTML = `
+        <div class="buttons-container">
+            <button class="button flip-button">
+                <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><title>flip_vertical_fill</title><g id="flip_vertical_fill" fill='none' fill-rule='evenodd'><path d='M24 0v24H0V0zM12.593 23.258l-.011.002-.071.035-.02.004-.014-.004-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01-.017.428.005.02.01.013.104.074.015.004.012-.004.104-.074.012-.016.004-.017-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113-.013.002-.185.093-.01.01-.003.011.018.43.005.012.008.007.201.093c.012.004.023 0 .029-.008l.004-.014-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014-.034.614c0 .012.007.02.017.024l.015-.002.201-.093.01-.008.004-.011.017-.43-.003-.012-.01-.01z'/><path fill='#FFFFFFFF' d='M12 2a1 1 0 0 1 1 1v18a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1M7.864 5.207C8.28 4.045 10 4.343 10 5.577V18.9A1.1 1.1 0 0 1 8.9 20H4.142a1.1 1.1 0 0 1-1.036-1.47zm6.136.37c0-1.234 1.72-1.532 2.136-.37l4.758 13.323A1.1 1.1 0 0 1 19.858 20H15.1a1.1 1.1 0 0 1-1.1-1.1z'/></g></svg>
+            </button>
+            <button class="button detail-button">
+                <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><title>detail</title><g fill='none' fill-rule='evenodd'><path d='M24 0v24H0V0zM12.593 23.258l-.011.002-.071.035-.02.004-.014-.004-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01-.017.428.005.02.01.013.104.074.015.004.012-.004.104-.074.012-.016.004-.017-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113-.013.002-.185.093-.01.01-.003.011.018.43.005.012.008.007.201.093c.012.004.023 0 .029-.008l.004-.014-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014-.034.614c0 .012.007.02.017.024l.015-.002.201-.093.01-.008.004-.011.017-.43-.003-.012-.01-.01z'/><path fill='#FFFFFFFF' d='M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 9a1 1 0 0 0-.993.883L11 12v4.5a1 1 0 0 0 1.993.117L13 16.5V12a1 1 0 0 0-1-1Zm0-4.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z'/></g></svg>
+            </button>
+        </div>
+    `;
+    
+    noteItems.forEach(function(item) {
+        const img = item.querySelector('img');
+        if (!img) return;
+        
+        item.addEventListener('mouseenter', function() {
+            // === 1. Hover Info 표시 ===
             const src = img.getAttribute('src');
             const noteIdMatch = src.match(/note_(\d+)/);
-            if (!noteIdMatch) return;
-            
-            const noteId = parseInt(noteIdMatch[1]);
-            const note = notesData.find(n => n.id === noteId);
-            // 이 부분이 json 파일과 연결되는 핵심입니다.
-            // 1. loadNoteInfo() 함수가 note_data.json 파일을 fetch해서 noteInfoData 배열에 저장합니다.
-            // 2. notesData의 각 note 객체에 대해, noteInfoData에서 번호가 일치하는 info 객체를 찾아 note.info로 할당합니다.
-            // 3. 아래 코드에서 note.info를 통해 json에서 불러온 데이터를 접근할 수 있습니다.
-
-            // 노트 정보가 있으면 hover-info 내용 업데이트
-            if (note && note.info) {
-                const info = note.info; // info는 note_data.json에서 불러온 해당 노트의 정보입니다.
-                document.getElementById('note_period').querySelector('.hover-info-item-text').textContent = 
-                    `${info.시기_구분}`;
-                document.getElementById('note_purpose').querySelector('.hover-info-item-text').textContent = 
-                    `${info.사용_목적}`;
-                document.getElementById('note_duration').querySelector('.hover-info-item-text').textContent = 
-                    `${info.개시일자} ~ ${info.최종_사용일자}`;
-                document.getElementById('note_total_page').querySelector('.hover-info-item-text').textContent = 
-                    `${info.구입처}`;
+            if (noteIdMatch) {
+                const noteId = parseInt(noteIdMatch[1]);
+                const note = notesData.find(n => n.id === noteId);
+                
+                if (note && note.info) {
+                    const info = note.info;
+                    document.getElementById('note_period').querySelector('.hover-info-item-text').textContent = 
+                        `${info.시기_구분}`;
+                    document.getElementById('note_purpose').querySelector('.hover-info-item-text').textContent = 
+                        `${info.사용_목적}`;
+                    document.getElementById('note_duration').querySelector('.hover-info-item-text').textContent = 
+                        `${info.개시일자} ~ ${info.최종_사용일자}`;
+                    document.getElementById('note_total_page').querySelector('.hover-info-item-text').textContent = 
+                        `${info.구입처}`;
+                }
+                
+                const rect = item.getBoundingClientRect();
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                hoverInfo.classList.remove('disabled');
+                const hoverHeight = hoverInfo.offsetHeight;
+                
+                const left = rect.right + 24 + scrollLeft;
+                const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
+                
+                hoverInfo.style.left = left + 'px';
+                hoverInfo.style.top = top + 'px';
+                hoverInfo.style.zIndex = '9999';
             }
             
-            // 이미지의 위치와 크기를 구함
-            const rect = noteCover.getBoundingClientRect();
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-            // hover-info의 크기 측정 (보이게 해야 정확히 측정됨)
-            hoverInfo.classList.remove('disabled');
-            const hoverWidth = hoverInfo.offsetWidth;
-            const hoverHeight = hoverInfo.offsetHeight;
-
-            // 이미지의 우측 중앙에 hover-info를 위치
-            const left = rect.right + 24 + scrollLeft; // 이미지 우측에 24px 띄우기
-            const top = rect.top + scrollTop + (rect.height / 2) - (hoverHeight / 2);
-
-            hoverInfo.style.left = left + 'px';
-            hoverInfo.style.top = top + 'px';
-            hoverInfo.style.zIndex = '9999';
-            hoverInfo.classList.remove('disabled');
+            // === 2. Buttons 생성 (Flip Button + Detail Button) ===
+            if (!item.querySelector('.buttons-container')) {
+                const temp = document.createElement('div');
+                temp.innerHTML = buttonsHTML.trim();
+                const buttonsContainer = temp.firstChild;
+                item.appendChild(buttonsContainer);
+                
+                // Flip Button 클릭 이벤트
+                const flipBtn = buttonsContainer.querySelector('.flip-button');
+                flipBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const currentSrc = img.getAttribute('src');
+                    
+                    // 애니메이션 시작
+                    img.classList.add('flipping');
+                    
+                    // 애니메이션 50% 지점(0.3초)에 이미지 변경
+                    setTimeout(function() {
+                        if (currentSrc.includes('note_cover')) {
+                            const newSrc = currentSrc.replace(
+                                /note_cover\/(note_\d+)\.png/,
+                                'note_back/$1_back.png'
+                            );
+                            img.setAttribute('src', newSrc);
+                            
+                            // 뒤집은 후 1.5초 뒤에 다시 앞면으로
+                            setTimeout(function() {
+                                if (img.getAttribute('src') === newSrc) {
+                                    img.classList.add('flipping');
+                                    
+                                    setTimeout(function() {
+                                        const originalSrc = newSrc.replace(
+                                            /note_back\/(note_\d+)_back\.png/,
+                                            'note_cover/$1.png'
+                                        );
+                                        img.setAttribute('src', originalSrc);
+                                    }, 300);
+                                    
+                                    setTimeout(function() {
+                                        img.classList.remove('flipping');
+                                    }, 600);
+                                }
+                            }, 1500);
+                        } else if (currentSrc.includes('note_back')) {
+                            const newSrc = currentSrc.replace(
+                                /note_back\/(note_\d+)_back\.png/,
+                                'note_cover/$1.png'
+                            );
+                            img.setAttribute('src', newSrc);
+                        }
+                    }, 300);
+                    
+                    // 애니메이션 완료 후 클래스 제거
+                    setTimeout(function() {
+                        img.classList.remove('flipping');
+                    }, 600);
+                });
+                
+                // Detail Button (클릭 이벤트 없음)
+                const detailBtn = buttonsContainer.querySelector('.detail-button');
+                // 추후 기능 추가 예정
+            }
+            
+            // === 3. Signature Background 생성 ===
+            if (!item.querySelector('.signature-background')) {
+                const bgDiv = document.createElement('div');
+                bgDiv.className = 'signature-background';
+                
+                bgDiv.style.left = (img.offsetLeft) + 'px';
+                bgDiv.style.top = (img.offsetTop) + 'px';
+                bgDiv.style.width = img.offsetWidth + 'px';
+                bgDiv.style.height = img.offsetHeight + 'px';
+                
+                const signatureImg = document.createElement('img');
+                signatureImg.src = 'images/signature.svg';
+                signatureImg.alt = 'signature';
+                
+                bgDiv.appendChild(signatureImg);
+                item.insertBefore(bgDiv, img);
+                
+                item.style.zIndex = 100;
+                img.style.position = 'relative';
+                img.style.zIndex = 2;
+                
+                // 다른 노트들 회색 처리
+                noteItems.forEach(function(otherItem) {
+                    if (otherItem !== item) {
+                        otherItem.style.filter = 'grayscale(100%)';
+                        otherItem.style.opacity = '0.5';
+                        otherItem.style.transition = 'all 0.3s ease';
+                    }
+                });
+            }
+            
+            // === 4. 이미지 Scale 효과 및 그림자 적용 ===
+            img.style.scale = '1.25';
+            img.style.filter = 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))';
         });
-        noteCover.addEventListener('mouseleave', function() {
+        
+        item.addEventListener('mouseleave', function() {
+            // hover-info 숨기기
             hoverInfo.classList.add('disabled');
+            
+            // 버튼들 제거
+            const buttonsContainer = item.querySelector('.buttons-container');
+            if (buttonsContainer) {
+                buttonsContainer.remove();
+            }
+            
+            // signature background 제거
+            const bgDiv = item.querySelector('.signature-background');
+            if (bgDiv) {
+                bgDiv.remove();
+            }
+            
+            // 이미지 scale 및 그림자 복구
+            img.style.scale = '';
+            img.style.filter = '';
+            
+            // z-index 복구
+            item.style.zIndex = '';
+            img.style.zIndex = '';
+            img.style.position = '';
+            
+            // 모든 노트의 필터 제거
+            noteItems.forEach(function(otherItem) {
+                otherItem.style.filter = '';
+                otherItem.style.opacity = '';
+            });
         });
     });
 }
@@ -430,8 +567,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     // JSON 데이터 먼저 로드
     await loadNoteInfo();
     
-    // hover-info 설정 (JSON 데이터 로드 후)
-    setupHoverInfo();
+    // hover-info 초기화 (JSON 데이터 로드 후)
+    const hoverInfo = initHoverInfo();
+    
+    // 통합된 노트 아이템 hover 기능 설정
+    setupNoteItemHover(hoverInfo);
     
     // 노트 카드들 렌더링
     notesData.forEach(note => {
@@ -508,80 +648,3 @@ document.querySelectorAll('.main-shelf-stage-header').forEach(function(header) {
         }
     });
 });
-
-
-// flip 버튼 기능: 노트 커버 이미지를 클릭하면 앞/뒤 이미지를 토글한다.
-// flip 버튼은 각 main-shelf-stage-content-item에 hover 시에만 동적으로 생성/제거된다.
-
-(function() {
-    // flip 버튼의 HTML 템플릿
-    const flipButtonHTML = `
-        <div class="button-container" id="main-shelf-stage-content-item-flip-button">
-            <button class="button" id="main-shelf-stage-content-item-flip-button">
-                <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><title>flip_vertical_fill</title><g id="flip_vertical_fill" fill='none' fill-rule='evenodd'><path d='M24 0v24H0V0zM12.593 23.258l-.011.002-.071.035-.02.004-.014-.004-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01-.017.428.005.02.01.013.104.074.015.004.012-.004.104-.074.012-.016.004-.017-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113-.013.002-.185.093-.01.01-.003.011.018.43.005.012.008.007.201.093c.012.004.023 0 .029-.008l.004-.014-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014-.034.614c0 .012.007.02.017.024l.015-.002.201-.093.01-.008.004-.011.017-.43-.003-.012-.01-.01z'/><path fill='#FFFFFFFF' d='M12 2a1 1 0 0 1 1 1v18a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1M7.864 5.207C8.28 4.045 10 4.343 10 5.577V18.9A1.1 1.1 0 0 1 8.9 20H4.142a1.1 1.1 0 0 1-1.036-1.47zm6.136.37c0-1.234 1.72-1.532 2.136-.37l4.758 13.323A1.1 1.1 0 0 1 19.858 20H15.1a1.1 1.1 0 0 1-1.1-1.1z'/></g></svg>
-            </button>
-        </div>
-    `;
-
-    // 각 노트 커버 아이템에 hover 이벤트를 부여
-    document.querySelectorAll('.main-shelf-stage-content-item').forEach(function(noteCoverItem) {
-        let flipButtonContainer = null;
-
-        noteCoverItem.addEventListener('mouseenter', function() {
-            // flip 버튼이 이미 있으면 중복 생성 방지
-            if (!noteCoverItem.querySelector('.button-container')) {
-                // 버튼을 DOM으로 파싱해서 삽입
-                const temp = document.createElement('div');
-                temp.innerHTML = flipButtonHTML.trim();
-                flipButtonContainer = temp.firstChild;
-                // 버튼을 아이템의 맨 앞에 삽입
-                noteCoverItem.insertBefore(flipButtonContainer, noteCoverItem.firstChild);
-
-                // 버튼 클릭 이벤트 등록
-                const flipBtn = flipButtonContainer.querySelector('button');
-                flipBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    const noteCoverImage = noteCoverItem.querySelector('img');
-                    const currentSrc = noteCoverImage.getAttribute('src');
-
-                    // 1. 현재 노트 커버(front)면 -> 뒷면(back) 이미지로 변경 후 3초 뒤에 다시 앞면으로 복귀
-                    if (currentSrc.includes('note_cover')) {
-                        const newSrc = currentSrc.replace(
-                            /note_cover\/(note_\d+)\.png/,
-                            'note_back/$1_back.png'
-                        );
-                        noteCoverImage.setAttribute('src', newSrc);
-
-                        setTimeout(function() {
-                            if (noteCoverImage.getAttribute('src') === newSrc) {
-                                const originalSrc = newSrc.replace(
-                                    /note_back\/(note_\d+)_back\.png/,
-                                    'note_cover/$1.png'
-                                );
-                                noteCoverImage.setAttribute('src', originalSrc);
-                            }
-                        }, 1500);
-
-                    // 2. 현재 노트 뒷면(back)이면 -> 앞면(cover) 이미지로 변경 (즉시)
-                    } else if (currentSrc.includes('note_back')) {
-                        const newSrc = currentSrc.replace(
-                            /note_back\/(note_\d+)_back\.png/,
-                            'note_cover/$1.png'
-                        );
-                        noteCoverImage.setAttribute('src', newSrc);
-                    }
-                });
-            }
-        });
-
-        noteCoverItem.addEventListener('mouseleave', function() {
-            // flip 버튼이 있으면 제거
-            const btn = noteCoverItem.querySelector('.button-container');
-            if (btn) {
-                btn.remove();
-            }
-        });
-    });
-})();
-
