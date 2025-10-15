@@ -267,8 +267,10 @@ function openNoteModal(note) {
     }
     
     updatePageControls();
-    noteModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    noteModal.classList.add('modal-open');
+    noteModal.classList.remove('modal-closed');
+    document.body.classList.add('body-modal-open');
+    document.body.classList.remove('body-modal-closed');
 }
 
 // 페이지 컨트롤 업데이트
@@ -289,9 +291,11 @@ function updatePageControls() {
     
     // 빈 pages 배열인 경우 페이지 네비게이션 UI 숨기기
     if (totalPages === 0) {
-        pageControls.style.display = 'none';
+        pageControls.classList.add('page-controls-hidden');
+        pageControls.classList.remove('page-controls-visible');
     } else {
-        pageControls.style.display = 'flex';
+        pageControls.classList.add('page-controls-visible');
+        pageControls.classList.remove('page-controls-hidden');
         pageInfo.textContent = `${currentPageIndex + 1} / ${totalPages}`;
         
         // 버튼 상태 업데이트
@@ -318,15 +322,17 @@ function goToNextPage() {
 
 // 모달 닫기
 function closeNoteModal() {
-    noteModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    noteModal.classList.add('modal-closed');
+    noteModal.classList.remove('modal-open');
+    document.body.classList.add('body-modal-closed');
+    document.body.classList.remove('body-modal-open');
     currentNote = null;
     currentPageIndex = 0;
 }
 
 // 키보드 이벤트 처리
 function handleKeyPress(event) {
-    if (noteModal.style.display === 'block') {
+    if (noteModal.classList.contains('modal-open')) {
         switch(event.key) {
             case 'Escape':
                 closeNoteModal();
@@ -381,8 +387,7 @@ function initHoverInfo() {
     }
 
     // hover-info를 항상 body의 최상위에 위치시키기 위한 스타일
-    hoverInfo.style.position = 'absolute';
-    hoverInfo.style.pointerEvents = 'none';
+    hoverInfo.classList.add('hover-info-positioned');
     
     return hoverInfo;
 }
@@ -548,23 +553,20 @@ function setupNoteItemHover(hoverInfo) {
                 bgDiv.appendChild(signatureImg);
                 item.insertBefore(bgDiv, img);
                 
-                item.style.zIndex = 100;
-                img.style.position = 'relative';
-                img.style.zIndex = 2;
+                item.classList.add('note-item-hovered');
                 
                 // 다른 노트들 회색 처리
                 noteItems.forEach(function(otherItem) {
                     if (otherItem !== item) {
-                        otherItem.style.filter = 'grayscale(100%)';
-                        otherItem.style.opacity = '0.5';
-                        otherItem.style.transition = 'all 0.3s ease';
+                        otherItem.classList.add('note-item-unhovered');
+                        otherItem.classList.remove('note-item-normal');
                     }
                 });
             }
             
             // === 4. 이미지 Scale 효과 및 그림자 적용 ===
-            img.style.scale = '1.25';
-            img.style.filter = 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3))';
+            img.classList.add('note-image-hovered');
+            img.classList.remove('note-image-normal');
         });
         
         item.addEventListener('mouseleave', function() {
@@ -584,18 +586,16 @@ function setupNoteItemHover(hoverInfo) {
             }
             
             // 이미지 scale 및 그림자 복구
-            img.style.scale = '';
-            img.style.filter = '';
+            img.classList.add('note-image-normal');
+            img.classList.remove('note-image-hovered');
             
             // z-index 복구
-            item.style.zIndex = '';
-            img.style.zIndex = '';
-            img.style.position = '';
+            item.classList.remove('note-item-hovered');
             
             // 모든 노트의 필터 제거
             noteItems.forEach(function(otherItem) {
-                otherItem.style.filter = '';
-                otherItem.style.opacity = '';
+                otherItem.classList.add('note-item-normal');
+                otherItem.classList.remove('note-item-unhovered');
             });
         });
     });
@@ -641,31 +641,72 @@ function handleImageError(img) {
 
 //아코디언 UI 이벤트 리스너
 mainDetailToggle.addEventListener('click', function() {
-    mainDetailContent.classList.toggle('disabled');
+    const isCurrentlyDisabled = mainDetailContent.classList.contains('disabled');
+    
+    if (isCurrentlyDisabled) {
+        // 열기
+        mainDetailContent.classList.remove('disabled', 'closing');
+        mainDetailContent.classList.add('animating');
+        
+        // 애니메이션 완료 후 클래스 정리
+        setTimeout(() => {
+            mainDetailContent.classList.remove('animating');
+        }, 350);
+    } else {
+        // 닫기
+        mainDetailContent.classList.remove('animating');
+        mainDetailContent.classList.add('closing');
+        
+        // 애니메이션 완료 후 disabled 클래스 추가
+        setTimeout(() => {
+            mainDetailContent.classList.remove('closing');
+            mainDetailContent.classList.add('disabled');
+        }, 350);
+    }
+    
     // 하위 svg 요소를 180도 회전시키기
     const toggleSvg = mainDetailToggle.querySelector('svg');
     if (toggleSvg) {
         // toggle 회전
         const isExpanded = !mainDetailContent.classList.contains('disabled');
-        toggleSvg.style.transition = 'transform 0.3s';
-        toggleSvg.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+        toggleSvg.classList.remove('toggle-rotated', 'toggle-normal');
+        toggleSvg.classList.add(isExpanded ? 'toggle-rotated' : 'toggle-normal');
     }
 });
 
 mainFooterToggle.addEventListener('click', function() {
-    const wasDisabled = mainFooterContent.classList.contains('disabled');
-    mainFooterContent.classList.toggle('disabled');
-    // disabled가 없어졌을 때(=보이게 되었을 때) 스크롤을 제일 아래로 이동
-    if (wasDisabled && !mainFooterContent.classList.contains('disabled')) {
-        mainFooterContent.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    const isCurrentlyDisabled = mainFooterContent.classList.contains('disabled');
+    
+    if (isCurrentlyDisabled) {
+        // 열기
+        mainFooterContent.classList.remove('disabled', 'closing');
+        mainFooterContent.classList.add('animating');
+        
+        // 애니메이션 완료 후 클래스 정리
+        setTimeout(() => {
+            mainFooterContent.classList.remove('animating');
+            // disabled가 없어졌을 때(=보이게 되었을 때) 스크롤을 제일 아래로 이동
+            mainFooterContent.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 350);
+    } else {
+        // 닫기
+        mainFooterContent.classList.remove('animating');
+        mainFooterContent.classList.add('closing');
+        
+        // 애니메이션 완료 후 disabled 클래스 추가
+        setTimeout(() => {
+            mainFooterContent.classList.remove('closing');
+            mainFooterContent.classList.add('disabled');
+        }, 350);
     }
+    
     // 하위 svg 요소를 180도 회전시키기
     const svg = mainFooterToggle.querySelector('svg');
     if (svg) {
         // toggle 회전
         const isExpanded = !mainFooterContent.classList.contains('disabled');
-        svg.style.transition = 'transform 0.3s';
-        svg.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+        svg.classList.remove('toggle-rotated', 'toggle-normal');
+        svg.classList.add(isExpanded ? 'toggle-rotated' : 'toggle-normal');
     }
 });
 

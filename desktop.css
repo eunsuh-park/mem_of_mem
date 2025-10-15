@@ -1,0 +1,81 @@
+/* ==========================================
+데스크톱 전용 스타일 (1024px 이상)
+   ========================================== */
+
+/* 데스크톱에서는 모든 스타일이 공통 스타일로 이동되었으므로
+   여기서는 데스크톱에서만 필요한 특별한 스타일만 정의합니다. */
+
+/* 현재는 모든 스타일이 style.css의 공통 스타일로 이동되어
+   데스크톱 전용 스타일이 없습니다. */
+
+/* header */
+header img {
+    max-width: 200px;
+    margin: 48px 48px 0 48px;
+}
+
+
+.main-shelf {
+    height:100vh;
+    padding-bottom: 92px;
+}
+
+.main-shelf-stage {
+    width: auto;
+    height: auto;
+}
+
+.main-shelf-stage-header {
+    gap:16px;
+    padding: 0 16px 0 48px;
+    height: fit-content;
+}
+
+.main-shelf-stage-content {
+    padding: 24px 24px 24px 56px;
+    gap: 24px;
+    max-height: 1000px;
+}
+
+.main-shelf-stage-content img {
+    width: auto;
+    height: 100px;
+    object-fit: cover;
+}
+
+.main-detail-toggle, .main-footer-toggle {
+    padding: 16px 16px 16px 48px;
+}
+
+.main-detail-content, .main-footer-content {
+    padding: 16px 16px 16px 48px;
+}
+
+.main-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+
+.main-shelf-stage-title {
+    font-size: 48px;
+    font-weight: 400;
+}
+
+.main-shelf-stage-subtitle {
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+
+}
+
+.signature-background img {
+    height: 180px;
+}
+
+.note-image-hovered {
+    scale: 1.25;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}

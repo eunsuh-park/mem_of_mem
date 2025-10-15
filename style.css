@@ -1,13 +1,15 @@
-@import "reset.css";
+
+@import url("desktop.css") screen and (min-width: 1024px);
+@import url("tablet.css") screen and (min-width: 690px) and (max-width: 1023px);
+@import url("mobile.css") screen and (max-width: 689px);
+/* Cafe24 폰트는 @font-face로 로드 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
 /* font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; */
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-/* Cafe24 폰트는 @font-face로 로드 */
-@font-face {
-    font-family: 'Cafe24AnemoneAir';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202@1.0/Cafe24Ohsquareair.woff') format('woff');
-}
 
+/* ==========================================
+   공통 스타일 (모든 화면 크기에서 사용)
+   ========================================== */
 
 * {
     font-family: "Pretendard Variable", Pretendard;
@@ -39,12 +41,9 @@ header {
     border-right: 2px solid #000;
 }
 
-
 header img {
     width: auto;
     align-self: center;
-    max-width: 200px;
-    margin: 48px 48px 0 48px;
     background-color: white;
 }
 
@@ -81,15 +80,26 @@ header .header-subtitle {
     flex: 0 1 120px; /* 필요 시 아래로 내려가도록 */
 }
 
-.header-text, .korean {
+.header-text {
+    margin: 0;
+    padding: 18px 24px;
+}
+
+.korean {
     font-size: 13px;
     font-weight: 400;
     line-height: 1.5;
     padding: 0;
     margin: 0;
-    padding: 18px 24px;
 }
 
+.english {
+    font-size: 12px;
+    font-weight: 200;
+    line-height: 1.3;
+    padding: 0;
+    margin: 0;
+}
 
 .header-footer-container {
     width: 100%;
@@ -109,47 +119,6 @@ header .header-subtitle {
     background-color: #f3f3f3; /* 스크롤 시 가독성을 위해 배경색 지정 */
     z-index: 10; /* 다른 요소와 겹칠 경우를 대비 */
 }
-
-
-
-/* header-text-container */
-/*
-#middle-banner {
-    min-width: 48px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background-color: #000;
-}
-
-.middle-banner-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: #fff;
-    gap: 16px;
-    font-size: 20px;
-}
-
-.middle-banner-title {
-    font-weight: 600;
-    letter-spacing: -0.2em;
-    writing-mode: vertical-rl;
-}
-
-.middle-banner-text {
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: -0.1em;
-    writing-mode: vertical-rl;
-}
-*/
-
 
 #main-content {
     width: 84%;
@@ -173,10 +142,6 @@ header .header-subtitle {
 }
 
 .main-footer {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
     z-index: 100;
     display: flex;
     flex-direction: column;
@@ -192,7 +157,6 @@ header .header-subtitle {
     justify-content: space-between;
     align-items: center;
     color: white;
-    padding: 16px 16px 16px 48px;
     box-sizing: border-box;
     border-bottom: 1px solid white;
 }
@@ -221,12 +185,12 @@ header .header-subtitle {
 /* 아코디언 효과 */
 .main-detail-content, .main-footer-content {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
+    grid-auto-flow: wrap;
     align-items: start;
     box-sizing: border-box;
     color: white;
-    padding: 16px 16px 16px 48px;
     width: 100%;
     max-height: 1000px;
     opacity: 1;
@@ -236,7 +200,7 @@ header .header-subtitle {
 
 .main-detail-content.disabled,
 .main-footer-content.disabled {
-    display: grid;
+    display: none;
     max-height: 0;
     padding-top: 0;
     padding-bottom: 0;
@@ -244,23 +208,17 @@ header .header-subtitle {
     pointer-events: none;
 }
 
-.english {
-    font-size: 14px;
-    font-weight: 200;}
-
 
 
 /* main-shelf */
-
 .main-shelf {
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: start;
     width: 100%;
-    height:100vh;
     background-color: #f3f3f3;
-    padding-bottom: 92px;
+    box-sizing: border-box;
 }
 
 .main-shelf-stage {
@@ -269,6 +227,7 @@ header .header-subtitle {
     flex-direction: column;
     justify-content: start;
     align-items: start;
+    box-sizing: border-box;
     width: 100%;
 }
 
@@ -277,41 +236,31 @@ header .header-subtitle {
     flex-direction: row;
     justify-content: start;
     align-items: center;
-    gap:16px;
-    height: fit-content;
     width: 100%;
-    padding: 0 16px 0 48px;
     border-bottom: 2px solid black;
 }
 
 .main-shelf-stage-title {
     font-family: "Work Sans", sans-serif;
-    font-size: 48px;
     margin:0;
     line-height: 1;
-    font-weight: 400;
     letter-spacing: -0.02em;
 }
 
 .main-shelf-stage-subtitle {
     font-family: "Cafe24AnemoneAir", sans-serif;
-    font-size: 20px;
     margin:0;
-    line-height: 1;
     font-weight: 400;
-    letter-spacing: -0.02em;
 }
 
 .main-shelf-stage-content {
+    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     justify-content: start;
     align-items: center;
     width: 100%;
-    padding: 24px 24px 24px 56px;
-    gap: 24px;
     border-bottom: 2px solid black;
-    max-height: 1000px;
     opacity: 1;
     overflow: visible;
     transition: all 0.35s ease-in-out;
@@ -327,9 +276,6 @@ header .header-subtitle {
 }
 
 .main-shelf-stage-content img {
-    width: auto;
-    height: 100px;
-    object-fit: cover;
     cursor: pointer;
     transition: all 0.3s ease;
     transform-style: preserve-3d;
@@ -383,7 +329,6 @@ header .header-subtitle {
     font-weight: 400;
 }
 
-
 /* 버튼 컨테이너 - 이미지 하단 중앙에 배치 */
 .buttons-container {
     position: absolute;
@@ -414,7 +359,6 @@ header .header-subtitle {
     background-color: rgba(0, 0, 0, 0.75);
 }
 
-
 .disabled {
     display: none;
 }
@@ -424,7 +368,6 @@ header .header-subtitle {
     position: relative;
     overflow: visible;
     transition: all 0.3s ease;
-    perspective: 1000px;
 }
 
 /* 서명 배경 레이어 스타일 */
@@ -441,7 +384,6 @@ header .header-subtitle {
 
 .signature-background img {
     width: auto;
-    height: 180px;
     object-fit: contain;
 }
 
@@ -718,12 +660,73 @@ header .header-subtitle {
     text-align: center;
 }
 
-/* 노트 상세 이미지 컨테이너 */
-.note-detail-image-container {
-    position: relative;
-    max-width: 100%;
-    max-height: 80vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* JavaScript 스타일을 CSS 클래스로 분리 */
+.modal-open {
+    display: block;
 }
+
+.modal-closed {
+    display: none;
+}
+
+.body-modal-open {
+    overflow: hidden;
+}
+
+.body-modal-closed {
+    overflow: auto;
+}
+
+.page-controls-hidden {
+    display: none;
+}
+
+.page-controls-visible {
+    display: flex;
+}
+
+.hover-info-positioned {
+    position: absolute;
+    pointer-events: none;
+}
+
+.note-item-hovered {
+    z-index: 100;
+}
+
+.note-item-hovered img {
+    position: relative;
+    z-index: 2;
+}
+
+.note-item-unhovered {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.note-item-normal {
+    filter: none;
+    opacity: 1;
+}
+
+.note-image-normal {
+    scale: 1;
+    filter: none;
+}
+
+.toggle-rotated {
+    transition: transform 0.3s;
+    transform: rotate(180deg);
+}
+
+.toggle-normal {
+    transition: transform 0.3s;
+    transform: rotate(0deg);
+}
+
+@font-face {
+    font-family: 'Cafe24AnemoneAir';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202@1.0/Cafe24Ohsquareair.woff') format('woff');
+}
+
